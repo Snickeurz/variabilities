@@ -30,7 +30,7 @@ public class ExerciceNQueens
         // ///////////////////////////
         int nbSols = 0;
         // Number of permutations
-        int n = 5;
+        int n = 8;
         // Call class
         Permutations perm = new Permutations(n);
         // Iterate trought the List
@@ -43,7 +43,8 @@ public class ExerciceNQueens
                 System.out.println("\n" + p);
                 // Increase number of solutions
                 nbSols ++;
-                // break; // to stop after first solution
+                // to stop after first solution
+//                break;
             }
         }
         System.out.println("\nNombre de sols : " + nbSols);
