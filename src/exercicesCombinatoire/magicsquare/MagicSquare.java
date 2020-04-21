@@ -17,7 +17,7 @@ public class MagicSquare extends MagicSquareAbstract
     public static void main(final String... args)
     {
         // Try with a magic quare of size 3
-        MagicSquareAbstract m = new MagicSquare(3);
+        MagicSquareAbstract m = new MagicSquare(4);
         // Call implementation
         if (m.solveMagicSquare())
         {

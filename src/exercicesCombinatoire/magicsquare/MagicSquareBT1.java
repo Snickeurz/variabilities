@@ -1,43 +1,74 @@
 package exercicesCombinatoire.magicsquare;
 
 /**
- * Magic Square Skeleton
+ * <p>
+ *  Implementation of Magic Square.
+ * <p>
+ *
+ * @author Nicolas sibaud
  */
 public class MagicSquareBT1 extends MagicSquareAbstract
 {
     public static void main(final String... args)
     {
-        MagicSquareAbstract m = new MagicSquareBT1(4);
-        if (m.solveMagicSquare()) {
+        // Create new instance
+        MagicSquareAbstract m = new MagicSquareBT1(3);
+
+        // Try to solve magic square
+        if (m.solveMagicSquare())
+        {
+            // Magic square is solved, print it
             m.printMagicSquare();
         }
     }
 
+    /**
+     * Array of taken values.
+     */
     private final boolean[] taken; // taken[v] = true if and only if value v already taken
 
+    /**
+     * Constructor.
+     *
+     * @param n size of magic square
+     */
     public MagicSquareBT1(final int n)
     {
+        // super constructor
         super(n);
+
+        // new array
         taken = new boolean[super.n2 +1]; // actual values in  1..n2
     }
-    
+
+    /**
+     * Implementation.
+     *
+     * @return true if solved, else false
+     */
     @Override
     public boolean solveMagicSquare()
     {
-        // *** PUT YOUR CODE HERE ***
-        // *** (compute a solution in the t[][] array) ***
-        // *** (you can use the variables in the abstract class ***
-        return solveMagicSquare(0,0);
+        return this.solveMagicSquare(0,0);
     }
 
+    /**
+     * Helper method in charge of determining if magic square can be solved.
+     *
+     * @param i int
+     * @param j int
+     * @return true if solved, else false
+     */
     private boolean solveMagicSquare(int i, int j)
     {
+        // Check for column
         if (j >= super.n)
         {
             j=0;
             i++;
         }
 
+        // check for line
         if (i >= super.n)
         {
 //            super.printMagicSquare();
@@ -45,18 +76,25 @@ public class MagicSquareBT1 extends MagicSquareAbstract
             return true;
         }
 
-        for (int v=1; v <= super.n2; v++) {
+        // Iterate trough all values from 1 to super.n²
+        for (int v=1; v <= super.n2; v++)
+        {
             t[i][j] = v; // assigned here to simplify sum checks
-            if (possibleValue(i, j, v)) {
+
+            // Check if couple i j v is possible value
+            if (possibleValue(i, j, v))
+            {
                 // try this value (record changes)
                 taken[v] = true;
-                if (solveMagicSquare(i, j + 1)) {
+                // recursive call
+                if (solveMagicSquare(i, j + 1))
+                {
                     return true;
                 }
 
                 taken[v] = false;
             }
-            t[i][j] = 0; // undo
+            t[i][j] = 0; // undo assignment
         }
         return false;
     }
@@ -71,7 +109,7 @@ public class MagicSquareBT1 extends MagicSquareAbstract
         {
             return false;
         }
-        if (i == super.n && super.sumColumn(j) != super.sum)
+        if (i == super.n - 1 && super.sumColumn(j) != super.sum)
         {
             return false;
         }
