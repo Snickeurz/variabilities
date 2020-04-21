@@ -1,19 +1,19 @@
-package exercicesCombinatoire;
+package exercicesCombinatoire.magicsquare;
 
 /**
  * Magic Square Skeleton
  */
-public class MagicSquareSkeleton_BackUp extends MagicSquareAbstract
+public class MagicSquareSkeleton extends MagicSquareAbstract
 {
     public static void main(final String... args)
     {
-        MagicSquareAbstract m = new MagicSquareSkeleton_BackUp(3);
+        MagicSquareAbstract m = new MagicSquareSkeleton(3);
         if (m.solveMagicSquare()) {
             m.printMagicSquare();
         }
     }
 
-    public MagicSquareSkeleton_BackUp(final int n)
+    public MagicSquareSkeleton(final int n)
     {
         super(n);
     }

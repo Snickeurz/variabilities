@@ -1,4 +1,4 @@
-package exercicesCombinatoire;
+package exercicesCombinatoire.magicsquare;
 
 /**
  * Magic Square by Bactracking

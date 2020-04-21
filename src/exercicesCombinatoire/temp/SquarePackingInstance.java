@@ -1,4 +1,4 @@
-package exercicesCombinatoire;/*
+package exercicesCombinatoire.temp;/*
  * Square Packing
  * 
  * data

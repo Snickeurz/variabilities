@@ -1,13 +1,13 @@
-package exercicesCombinatoire;
+package exercicesCombinatoire.magicsquare;
 
 /**
  * Magic Square Skeleton
  */
-public class MagicSquareSkeletonBT1 extends MagicSquareAbstract
+public class MagicSquareBT1 extends MagicSquareAbstract
 {
     public static void main(final String... args)
     {
-        MagicSquareAbstract m = new MagicSquareSkeletonBT1(4);
+        MagicSquareAbstract m = new MagicSquareBT1(4);
         if (m.solveMagicSquare()) {
             m.printMagicSquare();
         }
@@ -15,7 +15,7 @@ public class MagicSquareSkeletonBT1 extends MagicSquareAbstract
 
     private final boolean[] taken; // taken[v] = true if and only if value v already taken
 
-    public MagicSquareSkeletonBT1(final int n)
+    public MagicSquareBT1(final int n)
     {
         super(n);
         taken = new boolean[super.n2 +1]; // actual values in  1..n2

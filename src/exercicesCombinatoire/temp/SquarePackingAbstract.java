@@ -1,4 +1,4 @@
-package exercicesCombinatoire;
+package exercicesCombinatoire.temp;
 
 import java.util.Arrays;
 
