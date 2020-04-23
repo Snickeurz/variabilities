@@ -2,7 +2,9 @@ package exercicesCombinatoire.magicsquare;
 
 /**
  * <p>
- *  Implementation of Magic Square.
+ *  Implementation Back tracking of Magic Square.
+ *
+ *  variables line by line, values : ascending order.
  * <p>
  *
  * @author Nicolas sibaud
@@ -71,8 +73,11 @@ public class MagicSquareBT1 extends MagicSquareAbstract
         // check for line
         if (i >= super.n)
         {
+            // display all solutions
 //            super.printMagicSquare();
 //            return false;
+
+            // display first solution
             return true;
         }
 
