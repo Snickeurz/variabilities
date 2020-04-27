@@ -22,8 +22,12 @@ import org.chocosolver.solver.variables.IntVar;
  * @author Daniel Diaz
  */
 public class Alpha26 {
-    public static void main(String[] args) {
+    public static void main(final String[] args)
+    {
+        // Create a new model
         Model model = new Model("ALPHA26");
+
+        // Set alphabet
         IntVar A = model.intVar("A", 1, 26);
         IntVar B = model.intVar("B", 1, 26);
         IntVar C = model.intVar("C", 1, 26);
@@ -50,7 +54,11 @@ public class Alpha26 {
         IntVar X = model.intVar("X", 1, 26);
         IntVar Y = model.intVar("Y", 1, 26);
         IntVar Z = model.intVar("Z", 1, 26);
+
+        // get all differents
         model.allDifferent(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z).post();
+
+        // Set constraints
         setConstraint(model, 45, B, A, L, L, E, T);
         setConstraint(model, 43, C, E, L, L, O);
         setConstraint(model, 74, C, O, N, C, E, R, T);
@@ -71,8 +79,13 @@ public class Alpha26 {
         setConstraint(model, 72, T, H, E, M, E);
         setConstraint(model, 100, V, I, O, L, I, N);
         setConstraint(model, 34, W, A, L, T, Z);
+
+        // Get solver
         Solver solver = model.getSolver();
+        // find solution
         Solution solution = solver.findSolution();
+
+        // print out solution
         System.out.println(solution);
     }
 
