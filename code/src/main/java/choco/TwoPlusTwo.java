@@ -1,6 +1,7 @@
 package choco;
 
 import org.chocosolver.solver.Model;
+import org.chocosolver.solver.Solution;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.search.strategy.Search;
 import org.chocosolver.solver.variables.IntVar;
@@ -12,30 +13,15 @@ public class TwoPlusTwo
 
     public static void main(String[] args)
     {
-//        // Create a new model
-//        Model model = new Model();
-//
-//        // create new var
-//        IntVar x = model.intVar("name", min, max);
-//
-//        // Create and post (activate) the constraints
-//        model.<constraint>.post();
-//
-//        // create solver
-//        Solver solver = model.getSolver();
-//
-//        // search solution
-//        solver.solve();
-//        // or
-//        solver.findSolution();
-
-
         Model model = new Model("TWO+TWO=FOUR");
 
+        // 1 .. 9 range
         IntVar T = model.intVar("T",1,9);
+        IntVar F = model.intVar("F", 1,9);
+
+        // 0 .. 9 range
         IntVar W = model.intVar("W", 0,9);
         IntVar O = model.intVar("O", 0,9);
-        IntVar F = model.intVar("F", 0,9);
         IntVar U = model.intVar("U", 0,9);
         IntVar R = model.intVar("R", 0,9);
 
@@ -57,11 +43,17 @@ public class TwoPlusTwo
 
         Solver solver = model.getSolver();
 
-        solver.setSearch(Search.inputOrderLBSearch(vars));
+//        solver.solve();
+        Solution solution;
 
-        solver.solve();
-        System.out.println(solver.findSolution());
+        int c = 0;
+        while ((solution = solver.findSolution()) != null)
+        {
+            System.out.println(solution);
+            c++;
+        }
 
+        System.out.println(String.format("%d solutions trouvé", c));
     }
 
 

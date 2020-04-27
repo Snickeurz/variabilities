@@ -21,7 +21,8 @@ import org.chocosolver.solver.variables.IntVar;
  *
  * @author Daniel Diaz
  */
-public class Alpha26 {
+public class Alpha26
+{
     public static void main(final String[] args)
     {
         // Create a new model
@@ -82,11 +83,19 @@ public class Alpha26 {
 
         // Get solver
         Solver solver = model.getSolver();
-        // find solution
-        Solution solution = solver.findSolution();
 
-        // print out solution
-        System.out.println(solution);
+        // find solution
+        Solution solution;
+
+        int c = 0;
+
+        while ((solution = solver.findSolution()) != null)
+        {
+            System.out.println(solution);
+            c++;
+        }
+
+        System.out.println(String.format("%d solutions trouvé", c));
     }
 
     private static void setConstraint(final Model model, final int sum, final IntVar ... v)
