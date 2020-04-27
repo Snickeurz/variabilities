@@ -4,7 +4,7 @@
 
     <groupId>cours</groupId>
     <artifactId>variabilities</artifactId>
-    <version>1.0.0.0.0</version>
+    <version>1.0.0</version>
 
 
     <packaging>pom</packaging>
@@ -20,6 +20,8 @@
     <properties>
 
         <choco.version>4.10.2</choco.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
 
 
@@ -28,13 +30,17 @@
     <!--                            Dependencies configuration                              -->
     <!--                                                                                    -->
     <!--                                                                                    -->
-    <dependencies>
-        <dependency>
-            <groupId>org.choco-solver</groupId>
-            <artifactId>choco-solver</artifactId>
-            <version>${choco.version}</version>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.choco-solver</groupId>
+                <artifactId>choco-solver</artifactId>
+                <version>${choco.version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
 
     <!--                                                                                    -->
@@ -49,9 +55,8 @@
     <!--                                  Project Information                               -->
     <!--                                                                                    -->
     <!--                                                                                    -->
-    <name>APPLICATION NAME</name>
-    <description>DESC</description>
-    <url>http://...</url>
+    <name>Programmation par contrainte</name>
+    <description>Programmation avec choco</description>
     <inceptionYear>2020</inceptionYear>
 
 
