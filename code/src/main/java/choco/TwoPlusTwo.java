@@ -50,7 +50,7 @@ public class TwoPlusTwo
         int[] coefs = new int[] {
                 100, 10, 1,
                 100, 10, 1,
-                1000, 100, 10, 1,
+                -1000, -100, -10, -1,
         };
 
         model.scalar(vars, coefs, "=", 0).post();
@@ -59,8 +59,8 @@ public class TwoPlusTwo
 
         solver.setSearch(Search.inputOrderLBSearch(vars));
 
-        System.out.println(solver.findSolution());
         solver.solve();
+        System.out.println(solver.findSolution());
 
     }
 
