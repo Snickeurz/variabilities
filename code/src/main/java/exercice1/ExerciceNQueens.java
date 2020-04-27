@@ -1,5 +1,6 @@
 package exercice1;
 
+
 import exercicesCombinatoire.Permutations;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class ExerciceNQueens
 {
     public static void main (String[] args)
     {
-        System.out.println("Exercice des N Queens");
+        System.out.println("exercice1.Exercice des N Queens");
 
         // ///////////////////////////
         // ////////N QUEENS///////////

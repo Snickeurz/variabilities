@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cours</groupId>
+    <artifactId>variabilities</artifactId>
+    <version>1.0.0.0.0</version>
+
+
+    <packaging>pom</packaging>
+
+
+
+
+    <!--                                                                                    -->
+    <!--                                                                                    -->
+    <!--                                  Propriétés communes                               -->
+    <!--                                                                                    -->
+    <!--                                                                                    -->
+    <properties>
+
+        <choco.version>4.10.2</choco.version>
+    </properties>
+
+
+    <!--                                                                                    -->
+    <!--                                                                                    -->
+    <!--                            Dependencies configuration                              -->
+    <!--                                                                                    -->
+    <!--                                                                                    -->
+    <dependencies>
+        <dependency>
+            <groupId>org.choco-solver</groupId>
+            <artifactId>choco-solver</artifactId>
+            <version>${choco.version}</version>
+        </dependency>
+    </dependencies>
+
+
+    <!--                                                                                    -->
+    <!--                                                                                    -->
+    <!--                                  Build configuration                               -->
+    <!--                                                                                    -->
+    <!--                                                                                    -->
+
+
+    <!--                                                                                    -->
+    <!--                                                                                    -->
+    <!--                                  Project Information                               -->
+    <!--                                                                                    -->
+    <!--                                                                                    -->
+    <name>APPLICATION NAME</name>
+    <description>DESC</description>
+    <url>http://...</url>
+    <inceptionYear>2020</inceptionYear>
+
+
+
+    <modules>
+        <module>code</module>
+    </modules>
+</project>
