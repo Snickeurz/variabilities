@@ -1,4 +1,4 @@
-package exercicesCombinatoire.temp;/*
+package choco.square.packing;/*
  * Square Packing
  * 
  * data
