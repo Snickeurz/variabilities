@@ -4,6 +4,7 @@ import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solution;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.nary.automata.FA.FiniteAutomaton;
+import org.chocosolver.solver.search.strategy.Search;
 import org.chocosolver.solver.variables.IntVar;
 
 public class Decomposition
@@ -54,7 +55,7 @@ public class Decomposition
         // given a model
         Model model = new Model("Decomposition");
         // given n // can't work with value @11 since 10 cannot be refered
-        int n = 8;
+        int n = 5;
 
         IntVar[] myTab = model.intVarArray("myTab", n, 0, n);
 
@@ -63,6 +64,7 @@ public class Decomposition
         model.sum(myTab, "=", n).post();
 
         Solver solver = model.getSolver();
+        solver.setSearch(Search.inputOrderLBSearch(myTab));
 
         // Check solutions
         Solution solution;

@@ -5,6 +5,8 @@ import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solution;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.exception.ContradictionException;
+import org.chocosolver.solver.objective.IObjectiveManager;
+import org.chocosolver.solver.objective.ObjectiveStrategy;
 import org.chocosolver.solver.variables.IntVar;
 
 /**
