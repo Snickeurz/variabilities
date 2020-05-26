@@ -1,7 +1,9 @@
 package choco.sudoku;
 
 import org.chocosolver.solver.Model;
+import org.chocosolver.solver.Solution;
 import org.chocosolver.solver.Solver;
+import org.chocosolver.solver.exception.ContradictionException;
 import org.chocosolver.solver.variables.IntVar;
 
 /**
@@ -10,7 +12,7 @@ import org.chocosolver.solver.variables.IntVar;
 public class Sudoku
 {
 
-    static int[][] grid0 = { // hard
+    static int[][] GRID_HARD = { // hard
         {0, 0, 0, 2, 0, 0, 0, 3, 0},
         {0, 6, 0, 0, 8, 0, 9, 0, 4},
         {0, 0, 8, 4, 0, 7, 0, 0, 0},
@@ -21,7 +23,7 @@ public class Sudoku
         {4, 0, 7, 0, 3, 0, 0, 5, 0},
         {0, 1, 0, 0, 0, 4, 0, 0, 0}};
 
-    static int[][] grid = { // very hard (diabolik)
+    static int[][] GRID_DIABOLIK = { // very hard (diabolik)
         {0, 0, 9, 0, 0, 0, 0, 4, 0},
         {7, 5, 0, 0, 0, 0, 0, 9, 0},
         {4, 3, 0, 0, 9, 1, 0, 0, 0},
@@ -32,48 +34,145 @@ public class Sudoku
         {0, 6, 0, 0, 0, 0, 0, 1, 3},
         {0, 8, 0, 0, 0, 0, 9, 0, 0}};
 
-    public static void main(final String[] args)
+    /**
+     * Main method.
+     *
+     * @param args jvm args
+     * @throws ContradictionException in case of propagation fail
+     */
+    public static void main(final String[] args) throws ContradictionException
     {
+        long startTime = System.nanoTime();
+        // *** DECLARE THE MAIN ATTRIBUTES ***
         // Create a new choco model
         Model model = new Model("Sodoku");
+        // Get solver
+        Solver solver = model.getSolver();
 
-        // Sizes
+        // size
         int n = 3;
+
+        // n2 = n²
         int n2 = n * n;
 
-        // We want values from 0 to 9
-        int lowerBound = 0;
+        // choose grid
+        // int[][] mySudokuGrid = GRID_HARD;
+        int[][] mySudokuGrid = GRID_DIABOLIK;
+
+        // Set boundaries values
+        // We want values from 1 to 9 (0 is for blank case, i.e find a value to fit in)
+        // My lower value is 1
+        int lowerBound = 1;
+        // My higher value is 9
         int upperBound = 9;
 
-        // *** DECLARE THE MAIN MATRIX ***
-        // Use IntVar[][] t = model.intVarMatrix(#lines, #columns, lower bound, upper bound);
-        IntVar[] lines = model.intVarArray("Lines", n2, lowerBound, upperBound);
-        IntVar[] columns = model.intVarArray("Columns", n2, lowerBound, upperBound);
 
-        IntVar[][] t = model.intVarMatrix(lines.length, columns.length, lowerBound, upperBound);
+        // *** DECLARE THE MAIN MATRIX ***
+        // model to think about :
+        // Use IntVar[][] t = model.intVarMatrix(#lines, #columns, lower bound, upper bound);
+
+        // Declare tab with n2*n2 dimension (n2 row and n2 column) and set values from 1 to 9
+        IntVar[][] t = model.intVarMatrix("t", n2, n2, lowerBound, upperBound);
 
         // *** INITIALIZE t[i][j] according to grid[i][j] ***
-        for (int i = 0; i < lines.length - 1; i++)
+        // Here we need to iterate over t[][]
+
+        // For each t's lines
+        for (int i = 0; i < n2; i++)
         {
-            for (int j = 0; j < columns.length -1; j++)
+            // For each t's columns
+            for (int j = 0; j < n2; j++)
             {
-//                t[i][j] = columns[j];
+                // in case of blank case (i.e, 0)
+                if (mySudokuGrid[i][j] == 0)
+                {
+                    // this cell will contain value between lowerbound (1) to upperboud (9)
+                    t[i][j] = model.intVar(lowerBound, upperBound);
+                }
+                else
+                {
+                    // Value is already displayed in my sudoku grid so i keep it
+                    t[i][j] = model.intVar(mySudokuGrid[i][j]);
+                }
             }
         }
 
         // *** SET CONSTRAINTS ON LINES ***
-
-
+        IntVar[][] lines = new IntVar[n2][n2];
         // *** SET CONSTRAINTS ON COLUMNS ***
+        IntVar[][] columns = new IntVar[n2][n2];
+
+        // Feed arrays
+        for (int i = 0; i < n2; i++)
+        {
+            // Get column array
+            System.arraycopy(t[i], 0, columns[i], 0, n2);
+
+            // Get line array
+            lines[i] = t[i];
+        }
 
         // *** SET CONSTRAINTS ON REGIONS ***
-        // NB: regions can be numbered (r) from 0 to n2 (excluded)
-        // region r: first coord i0 = r / n * n and j0 = r % n * n
+        // regions can be numbered (r) from 0 to n2 (excluded)
+        // Given my region
+        IntVar[][] r = new IntVar[n2][n2];
+
         // for a region r you can do 2 nested loops on i and j
-        // i from i0 to i0+n (excluded) and j from j0 to j0+n (excluded)
+        for (int x = 0; x < n2; x++)
+        {
+            IntVar[] block = new IntVar[n2];
+
+            // Set up a counter
+            int counter = 0;
+
+            // region r: first coord i0 = r / n * n
+            int i0 = x / n * n;
+            // and j0 = r % n * n
+            int j0 = x / n * n;
+
+            // i from i0 to i0+n (excluded)
+            for (int i = i0; i < i0 + n ; i++)
+            {
+                // and j from j0 to j0+n (excluded)
+                for (int j = j0; j < j0 + n; j++)
+                {
+                    block[counter] = t[i][j];
+                    counter++;
+                }
+                r[x] = block;
+            }
+        }
+
+        // Say to choco to use differents values for each vars because of sudoku's rules
+        for (int i = 0; i < n2; i++)
+        {
+            model.allDifferent(lines[i]).post();
+            model.allDifferent(columns[i]).post();
+            model.allDifferent(r[i]).post();
+        }
+
+        // Tell to solver to propagate constraints in order to reach endpoint
+        solver.propagate();
 
         // *** SOLVE ***
-        displaySudoku();
+        // find solution
+        Solution solution = solver.findSolution();
+        // if solution is null, then we are doomed
+        if (solution == null)
+        {
+            System.out.println("Damn, it's a K.O !");
+        }
+        // Victory, we go a solution here
+        else
+        {
+            // Call helper method to display sudoku
+            displaySudoku(n, t);
+
+            long endTime = System.nanoTime();
+            long duration = (endTime - startTime);
+            System.out.println("");
+            System.out.println("Solution found in : " + duration / 1000000 + " ms");
+        }
     }
 
     /**
@@ -84,13 +183,17 @@ public class Sudoku
      */
     private static void displaySudoku(final int n, final IntVar[][] t)
     {
-        // Set up variables
-        // n2 = n²
+        // *** Set up variables ***
+        // n2 means n²
         int n2 = n * n;
         int width = String.valueOf(n2).length();
 
-        // outprint
-        System.out.println("--- SOL --- " + n2 + "x" + n2);
+        // outprint title
+        System.out.println("***************************************");
+        System.out.println("****** SOLUTION FOR SUDOKU " + n2 + "x" + n2 + " ********");
+        System.out.println("***************************************");
+
+        System.out.println("");
 
         // StringBuilder
         StringBuilder s = new StringBuilder();
@@ -98,12 +201,16 @@ public class Sudoku
         // Iterate trought 0 to N
         for (int i = 0; i < n; i++)
         {
-            s.append("+");
-            for (int j = 0; j < n * 2 * width + 1; j++) {
-                s.append("-");
+            // draw first corner
+            s.append("¤");
+            // draw line
+            for (int j = 0; j < n * 2 * width + 1; j++)
+            {
+                s.append("¤");
             }
         }
-        s.append("+");
+        // add end corner
+        s.append("¤");
 
         // Iterate trought
         for (int i = 0; i < n2; i++)
