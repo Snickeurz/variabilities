@@ -204,9 +204,9 @@ public class Sudoku
     }
 
     /**
-     * Helper method.
+     * Helper method in charge of drawing.
      *
-     * @param n number of ?
+     * @param n number
      * @param t given IntVar array
      */
     private static void displaySudoku(final int n, final IntVar[][] t)
