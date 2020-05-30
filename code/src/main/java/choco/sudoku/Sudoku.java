@@ -6,6 +6,8 @@ import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.exception.ContradictionException;
 import org.chocosolver.solver.variables.IntVar;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Choco implementation of Sudoku.
  */
@@ -100,8 +102,7 @@ public class Sudoku
      */
     public static void main(final String[] args)
     {
-        // Start time
-        long startTime = System.nanoTime();
+         generateSudoku();
 
         // *** DECLARE THE MAIN ATTRIBUTES ***
         // Create a new choco model
@@ -114,7 +115,7 @@ public class Sudoku
         // choose grid
         // 9x9
         int[][] mySudokuGrid = GRID_HARD;
-//         int[][] mySudokuGrid = GRID_DIABOLIK;
+        // int[][] mySudokuGrid = GRID_DIABOLIK;
 
         // 16x16
         // int[][] mySudokuGrid = MONSTER_GRID;
@@ -127,6 +128,24 @@ public class Sudoku
         int lowerBound = 1;
         // My higher value is 9
         int upperBound = n2;
+
+        // solve(model, mySudokuGrid, n, n2, lowerBound, upperBound);
+    }
+
+    /**
+     * Helper method for refactor.
+     *
+     * @param model current model
+     * @param mySudokuGrid current sudoku grid
+     * @param n size
+     * @param n2 size²
+     * @param lowerBound min value
+     * @param upperBound highest value
+     */
+    public static void solve(final Model model, final int[][] mySudokuGrid, final int n, final int n2, final int lowerBound, final int upperBound)
+    {
+        // Start time
+        long startTime = System.nanoTime();
 
         // Declare tab with n2*n2 dimension (n2 row and n2 column)
         IntVar[][] t = new IntVar[n2][n2];
@@ -159,27 +178,12 @@ public class Sudoku
         IntVar[] region = new IntVar[n2];
         for (int i = 0; i < n2; i++)
         {
-            // region r: first coord i0 = r / n * n
-            int i0 = (i / n) * n;
-            // and j0 = r % n * n
-            int j0 = (i % n) * n;
-
-            // counter for regions
-            int counter = 0;
-
+            // Feed constraints
             for (int j = 0; j < n2; j++)
             {
                 lines[j] = t[i][j];
                 cols[j] = t[j][i];
             }
-            for (int x = 0; x < n; x++)
-            {
-                for (int y = 0; y < n; y++)
-                {
-                    region[counter++] = t[x + i0][y + j0];
-                }
-            }
-
             // Say to choco to use differents values for each vars because of sudoku's rules
             model.allDifferent(lines).post();
             model.allDifferent(cols).post();
@@ -255,7 +259,7 @@ public class Sudoku
 
 
     /**
-     *  Generate sudoku grid
+     *  Generate sudoku grid 9x9.
      *
      *  Steps :
      *  <p>
@@ -277,7 +281,30 @@ public class Sudoku
      */
     public static void generateSudoku()
     {
+        System.out.println("Generating a sudoku 9x9");
 
+        // Create a new choco model
+        Model model = new Model("generatedSodoku");
+
+        // declare sizes
+        int n = 3;
+        int n2 = n * n;
+        int emptyCell = 0;
+
+        // Create a 9x9 grid
+        IntVar[][] myGrid = new IntVar[n2][n2];
+
+        // Create empty grid 9x9
+        for (int x = 0; x < n2; x++)
+        {
+            for (int y = 0; y < n2; y++)
+            {
+                myGrid[x][y] = model.intVar(emptyCell);
+            }
+        }
+
+        // display 9x9 with all values to 0
+        displaySudoku(n, myGrid);
     }
 
     /**
