@@ -151,7 +151,7 @@ public class Sudoku
         // My lower value is 1
         int lowerBound = 1;
         // My higher value is 9
-        int upperBound = 9;
+        int upperBound = n2;
 
         // Declare tab with n2*n2 dimension (n2 row and n2 column)
         IntVar[][] t = new IntVar[n2][n2];
