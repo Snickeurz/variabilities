@@ -6,31 +6,6 @@ import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.exception.ContradictionException;
 import org.chocosolver.solver.variables.IntVar;
 
-import java.util.Arrays;
-
-/**
- * 1 )
- *
- * génerer grille de 0
- *
- * mettre un nb aléatoire dans une case
- *
- *
- * 2)
- *
- * Solver cette grille
- *
- * x --> garder premiere solution
- *
- * 3)
- *
- * iterate trought x et retirer nb aleatoire , un seul par un seul
- *
- * quand on enleve numero, on refait un solve, si solution > 1 bah alors on remet le chiffre
- * sinon on continue on refait
- */
-
-
 /**
  * Choco implementation of Sudoku.
  */
@@ -279,11 +254,53 @@ public class Sudoku
     }
 
 
-    public static void generate()
+    /**
+     *  Generate sudoku grid
+     *
+     *  Steps :
+     *  <p>
+     *      1) Generate grid of 0.
+     *         Then put random number in each cell.
+     *  </p>
+     *
+     * <p>
+     *     2) Solv the grid
+     *        Keep first solution.
+     * </p>
+     *
+     * <p>
+     * 3) iterate trought first solution and remove random number, one by one.
+     * When number is removed, re solve the model. If number of solution > 1 rebind the number.
+     * Redo process until > 1.
+     * </p>
+     *
+     */
+    public static void generateSudoku()
     {
 
     }
 
+    /**
+     * 1 )
+     *
+     * génerer grille de 0
+     *
+     * mettre un nb aléatoire dans une case
+     *
+     *
+     * 2)
+     *
+     * Solver cette grille
+     *
+     * x --> garder premiere solution
+     *
+     * 3)
+     *
+     * iterate trought x et retirer nb aleatoire , un seul par un seul
+     *
+     * quand on enleve numero, on refait un solve, si solution > 1 bah alors on remet le chiffre
+     * sinon on continue on refait
+     */
 
     /**
      * Helper method in charge of drawing.
