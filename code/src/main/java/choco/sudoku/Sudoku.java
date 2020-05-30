@@ -178,33 +178,62 @@ public class Sudoku
 
         // *** SET CONSTRAINTS ON LINES ***
         IntVar[] lines = new IntVar[n2];
-
         // *** SET CONSTRAINTS ON COLUMNS ***
         IntVar[] cols = new IntVar[n2];
+        // *** SET CONSTRAINTS ON REGION ***
         IntVar[] region = new IntVar[n2];
         for (int i = 0; i < n2; i++)
         {
-            int addCol = (i % n) * n;
-            int addRow = (i / n) * n;
-            int indexRegion = 0;
+            // region r: first coord i0 = r / n * n
+            int i0 = (i / n) * n;
+            // and j0 = r % n * n
+            int j0 = (i % n) * n;
+
+            // counter for regions
+            int counter = 0;
+
             for (int j = 0; j < n2; j++)
             {
                 lines[j] = t[i][j];
                 cols[j] = t[j][i];
             }
-            for (int p = 0; p < n; p++)
+            for (int x = 0; x < n; x++)
             {
                 for (int y = 0; y < n; y++)
                 {
-                    region[indexRegion++] = t[p + addRow][y + addCol];
+                    region[counter++] = t[x + i0][y + j0];
                 }
             }
+
+            // Say to choco to use differents values for each vars because of sudoku's rules
             model.allDifferent(lines).post();
             model.allDifferent(cols).post();
-            model.allDifferent(region).post();
         }
 
-        // Say to choco to use differents values for each vars because of sudoku's rules
+
+        // for a region r you can do 2 nested loops on i and j
+        for (int r = 0; r < n2; r++)
+        {
+            // Set up a counter
+            int counter = 0;
+
+            // region r: first coord i0 = r / n * n
+            int i0 = r / n * n;
+            // and j0 = r % n * n
+            int j0 = r % n * n;
+
+            // i from i0 to i0+n (excluded)
+            for (int i = 0; i < n ; i++)
+            {
+                // and j from j0 to j0+n (excluded)
+                for (int j = 0; j < n; j++)
+                {
+                    region[counter] = t[i + i0][j + j0];
+                    counter++;
+                }
+            }
+            model.allDifferent(region).post();
+        }
 
         // Get solver
         Solver solver = model.getSolver();
