@@ -313,6 +313,123 @@ public class Sudoku
         }
     }
 
+    /**
+     * Helper method in charge of solving sudoku.
+     *
+     * @param model current model
+     * @param mySudokuGrid current sudoku grid
+     * @param n size
+     * @param n2 size²
+     * @param lowerBound min value
+     * @param upperBound highest value
+     *
+     * @return Array IntVar
+     */
+    public static IntVar[][] solveBis(final Model model, final int[][] mySudokuGrid, final int n, final int n2, final int lowerBound, final int upperBound)
+    {
+        // Start time
+        long startTime = System.nanoTime();
+
+        // Declare tab with n2*n2 dimension (n2 row and n2 column)
+        IntVar[][] t = new IntVar[n2][n2];
+
+        // *** INITIALIZE t[i][j] according to grid[i][j] ***
+        // Here we need to iterate over t[][]
+        for (int i = 0; i < n2; i++)
+        {
+            for (int j = 0; j < n2; j++)
+            {
+                // If my current cell is > 0, then i pick the current value
+                if (mySudokuGrid[i][j] > 0)
+                {
+                    t[i][j] = model.intVar(mySudokuGrid[i][j]);
+                }
+                // my current cell is equal to 0, need a domain from lower to upper bound
+                else
+                {
+                    t[i][j] = model.intVar("X", lowerBound, upperBound);
+                }
+            }
+        }
+
+
+        // *** SET CONSTRAINTS ON LINES ***
+        IntVar[] lines = new IntVar[n2];
+        // *** SET CONSTRAINTS ON COLUMNS ***
+        IntVar[] cols = new IntVar[n2];
+        // *** SET CONSTRAINTS ON REGION ***
+        IntVar[] region = new IntVar[n2];
+        for (int i = 0; i < n2; i++)
+        {
+            // Feed constraints
+            for (int j = 0; j < n2; j++)
+            {
+                lines[j] = t[i][j];
+                cols[j] = t[j][i];
+            }
+            // Say to choco to use differents values for each vars because of sudoku's rules
+            model.allDifferent(lines).post();
+            model.allDifferent(cols).post();
+        }
+
+
+        // for a region r you can do 2 nested loops on i and j
+        for (int r = 0; r < n2; r++)
+        {
+            // Set up a counter
+            int counter = 0;
+
+            // region r: first coord i0 = r / n * n
+            int i0 = r / n * n;
+            // and j0 = r % n * n
+            int j0 = r % n * n;
+
+            // i from i0 to i0+n (excluded)
+            for (int i = 0; i < n ; i++)
+            {
+                // and j from j0 to j0+n (excluded)
+                for (int j = 0; j < n; j++)
+                {
+                    region[counter] = t[i + i0][j + j0];
+                    counter++;
+                }
+            }
+            model.allDifferent(region).post();
+        }
+
+        // Get solver
+        Solver solver = model.getSolver();
+
+        // Tell to solver to propagate constraints in order to reach endpoint
+        try
+        {
+            solver.propagate();
+        }
+        catch (ContradictionException ce)
+        {
+            System.out.println("Le problème n'a pas de solution !");
+            System.exit(1);
+        }
+
+        // *** SOLVE ***
+        // find solution
+        Solution solution = solver.findSolution();
+
+
+        // if solution is null, then we are doomed
+        if (solution == null)
+        {
+            System.out.println("Damn, it's a K.O !");
+        }
+        // Victory, we go a solution here
+        else
+        {
+            return t;
+        }
+
+        return null;
+    }
+
 
     /**
      *  Generate sudoku grid 9x9.
@@ -320,18 +437,15 @@ public class Sudoku
      *  Steps :
      *  <p>
      *      1) Generate grid of 0.
-     *         Then put random number in each cell.
+     *         Then put random number in cell.
      *  </p>
      *
      * <p>
-     *     2) Solv the grid
-     *        Keep first solution.
+     *     2) Solv the grid and keep solution.
      * </p>
      *
      * <p>
-     * 3) iterate trought first solution and remove random number, one by one.
-     * When number is removed, re solve the model. If number of solution > 1 rebind the number.
-     * Redo process until > 1.
+     *     3) iterate trought first solution and remove random number, one by one.
      * </p>
      *
      * for each row: every number from 1 to 9 should occur exactly once
@@ -352,19 +466,45 @@ public class Sudoku
         int emptyCell = 0;
 
         // Create a 9x9 grid
-        IntVar[][] myGrid = new IntVar[n2][n2];
+        int[][] myGrid = new int[n2][n2];
 
         // Create empty grid 9x9
         for (int x = 0; x < n2; x++)
         {
             for (int y = 0; y < n2; y++)
             {
-                myGrid[x][y] = model.intVar(emptyCell);
+                myGrid[x][y] = emptyCell;
             }
         }
 
-        // display 9x9 with all values to 0
-        displaySudoku(n, myGrid);
+        // set random value
+        myGrid[0][0] = randomGenerator(9);
+
+        IntVar[][] mySolvedGrid = solveBis(model, myGrid, n, n2, 1, 9);
+
+        // Remove random cells
+        for (int i = 0; i < n2; i++)
+        {
+            mySolvedGrid[i][randomGenerator(i)] = model.intVar(emptyCell);
+
+            for (int j = 0; j < n2; j++)
+            {
+                mySolvedGrid[j][randomGenerator(i)] = model.intVar(emptyCell);
+            }
+        }
+
+        displaySudoku(n, mySolvedGrid);
+    }
+
+    /**
+     * Helper method for generating random value.
+     *
+     * @param num value
+     * @return random value
+     */
+    public static int randomGenerator(int num)
+    {
+        return (int) Math.floor((Math.random()*num+1));
     }
 
 
