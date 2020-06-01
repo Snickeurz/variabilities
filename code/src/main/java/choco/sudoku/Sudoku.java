@@ -6,8 +6,6 @@ import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.exception.ContradictionException;
 import org.chocosolver.solver.variables.IntVar;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
  * Choco implementation of Sudoku.
  */
@@ -42,7 +40,7 @@ public class Sudoku
         {0, 8, 0, 0, 0, 0, 9, 0, 0}};
 
     /**
-     * Grid with 16x16
+     * Grid with 16x16.
      */
     static int[][] MONSTER_GRID = {
             {0,3,0,0,0,4,12,0,0,14,9,0,0,0,13,0},
@@ -64,7 +62,7 @@ public class Sudoku
     };
 
     /**
-     * Grid with 25x25
+     * Grid with 25x25.
      */
     static int[][] GOD_LIKE = {
             {23,0,20,8,15,0,21,6,17,0,0,0,0,0,0,24,19,0,0,0,12,0,0,0,2},
@@ -102,11 +100,24 @@ public class Sudoku
      */
     public static void main(final String[] args)
     {
+         // Ex 2
          generateSudoku();
 
+         // Ex 1
+//         sudoku9x9();
+//         sudoku16x16();
+//         sudoku25x25();
+    }
+
+    /**
+     * Exercice 1 : Solve 9x9 sudoku grid.
+     */
+    public static void sudoku9x9()
+    {
+        // Exercice 1
         // *** DECLARE THE MAIN ATTRIBUTES ***
         // Create a new choco model
-        Model model = new Model("Sodoku");
+        Model model = new Model("Sodoku9x9");
 
         // declare sizes
         int n = 3;
@@ -117,11 +128,6 @@ public class Sudoku
         int[][] mySudokuGrid = GRID_HARD;
         // int[][] mySudokuGrid = GRID_DIABOLIK;
 
-        // 16x16
-        // int[][] mySudokuGrid = MONSTER_GRID;
-        // 25x25
-        // int[][] mySudokuGrid = GOD_LIKE;
-
         // Set boundaries values
         // We want values from 1 to 9 (0 is for blank case, i.e find a value to fit in)
         // My lower value is 1
@@ -129,11 +135,61 @@ public class Sudoku
         // My higher value is 9
         int upperBound = n2;
 
-        // solve(model, mySudokuGrid, n, n2, lowerBound, upperBound);
+         solve(model, mySudokuGrid, n, n2, lowerBound, upperBound);
+    }
+
+    public static void sudoku16x16()
+    {
+        // Exercice 1
+        // *** DECLARE THE MAIN ATTRIBUTES ***
+        // Create a new choco model
+        Model model = new Model("Sodoku16x16");
+
+        // declare sizes
+        int n = 4;
+        int n2 = n * n;
+
+        // choose grid
+        // 16x16
+        int[][] mySudokuGrid = MONSTER_GRID;
+
+        // Set boundaries values
+        // We want values from 1 to 9 (0 is for blank case, i.e find a value to fit in)
+        // My lower value is 1
+        int lowerBound = 1;
+        // My higher value is n²
+        int upperBound = n2;
+
+         solve(model, mySudokuGrid, n, n2, lowerBound, upperBound);
+    }
+
+    public static void sudoku25x25()
+    {
+        // Exercice 1
+        // *** DECLARE THE MAIN ATTRIBUTES ***
+        // Create a new choco model
+        Model model = new Model("Sodoku25x25");
+
+        // declare sizes
+        int n = 5;
+        int n2 = n * n;
+
+        // choose grid
+        // 25x25
+        // todo : must remplace this grid because it is bad one
+        int[][] mySudokuGrid = GOD_LIKE;
+
+        // Set boundaries values
+        // My lower value is 1
+        int lowerBound = 1;
+        // My higher value is n²
+        int upperBound = n2;
+
+         solve(model, mySudokuGrid, n, n2, lowerBound, upperBound);
     }
 
     /**
-     * Helper method for refactor.
+     * Helper method in charge of solving sudoku.
      *
      * @param model current model
      * @param mySudokuGrid current sudoku grid
@@ -278,6 +334,10 @@ public class Sudoku
      * Redo process until > 1.
      * </p>
      *
+     * for each row: every number from 1 to 9 should occur exactly once
+     * for each column: every number from 1 to 9 should occur exactly once
+     * for each 3×3 square with a thicker border (there are 9 of them): every number from 1 to 9 should occur exactly once.
+     *
      */
     public static void generateSudoku()
     {
@@ -307,27 +367,6 @@ public class Sudoku
         displaySudoku(n, myGrid);
     }
 
-    /**
-     * 1 )
-     *
-     * génerer grille de 0
-     *
-     * mettre un nb aléatoire dans une case
-     *
-     *
-     * 2)
-     *
-     * Solver cette grille
-     *
-     * x --> garder premiere solution
-     *
-     * 3)
-     *
-     * iterate trought x et retirer nb aleatoire , un seul par un seul
-     *
-     * quand on enleve numero, on refait un solve, si solution > 1 bah alors on remet le chiffre
-     * sinon on continue on refait
-     */
 
     /**
      * Helper method in charge of drawing.
