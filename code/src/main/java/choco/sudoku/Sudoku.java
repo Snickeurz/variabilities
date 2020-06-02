@@ -43,6 +43,24 @@ public class Sudoku
         {0, 6, 0, 0, 0, 0, 0, 1, 3},
         {0, 8, 0, 0, 0, 0, 9, 0, 0}};
 
+    static int[][] grid6x6 = {
+            {4, 0, 0, 3, 0, 0},
+            {3, 6, 0, 1, 0, 0},
+            {0, 1, 0, 0, 0, 0},
+            {0, 0, 2, 6, 1, 0},
+            {0, 0, 0, 0, 0, 5},
+            {0, 0, 3, 0, 0, 0}};
+
+    static int[][] grid8x8 = {
+            {0, 8, 0, 0, 7, 5, 0, 0},
+            {0, 7, 6, 0, 0, 2, 0, 4},
+            {0, 0, 4, 0, 0, 0, 1, 0},
+            {5, 0, 7, 0, 8, 0, 3, 6},
+            {0, 2, 0, 6, 3, 0, 0, 0},
+            {0, 0, 0, 1, 5, 0, 0, 8},
+            {4, 0, 1, 3, 6, 0, 7, 0},
+            {2, 0, 0, 0, 0, 0, 0, 1}};
+
     /**
      * Grid with 16x16.
      */
@@ -102,41 +120,54 @@ public class Sudoku
      */
     public static void main(final String[] args)
     {
-//        do
-//        {
-//            showMenu();
-//            Scanner input = new Scanner(System.in);
-//            int choice = input.nextInt();
-//            switch (choice)
-//            {
-//                case 1:
-//                    generateSudoku();
-//                    break;
-//                case 2:
-//                    sudoku9x9();
-//                    break;
-//                case 3:
-//                    sudoku16x16();
-//                    break;
-//                case 4:
-//                    sudoku25x25();
-//                    break;
-//                case 5:
-//                default:
-//                    System.out.println("Bye bye");
-//                    exit(0);
-//            }
-//        } while (true);
+        do
+        {
+            showMenu();
+            Scanner input = new Scanner(System.in);
+            int choice = input.nextInt();
+            switch (choice)
+            {
+                case 1:
+                    generateSudoku();
+                    break;
+                case 2:
+                    sudoku9x9();
+                    break;
+                case 3:
+                    sudoku16x16();
+                    break;
+                case 4:
+                    sudoku25x25();
+                    break;
+                case 5:
+                    rect6x6();
+                    break;
+                case 6:
+                    rect8x8();
+                    break;
+                case 7:
+                default:
+                    System.out.println("Bye bye");
+                    exit(0);
+            }
+        } while (true);
 
 
-         // Ex 2
-         // generateSudoku();
-         // Ex 1
-         // sudoku9x9();
-//          sudoku16x16();
-          sudoku25x25();
+        // Ex 2
+        // generateSudoku();
+        // Ex 1
+        // sudoku9x9();
+        // Ex 1 ext 1
+        // sudoku16x16();
+        // sudoku25x25();
+        // Ex 1 ext 2
+        // rect6x6();
+        // rect8x8();
     }
 
+    /**
+     * Display menu.
+     */
     public static void showMenu()
     {
         System.out.println("Menu sudoku");
@@ -145,7 +176,9 @@ public class Sudoku
         System.out.println("2) Solve 9x9 grid");
         System.out.println("3) Solve 16x16 grid");
         System.out.println("4) Solve 25x25 grid");
-        System.out.println("5) Exit program");
+        System.out.println("5) Solve 6x6 grid");
+        System.out.println("6) Solve 8x8 grid");
+        System.out.println("7) Exit program");
         System.out.println("Enter choice : ");
     }
 
@@ -178,6 +211,9 @@ public class Sudoku
          solve(model, mySudokuGrid, n, n2, lowerBound, upperBound);
     }
 
+    /**
+     * Exercice 1 - ext 1 : Solve 16x16 sudoku grid.
+     */
     public static void sudoku16x16()
     {
         // Exercice 1
@@ -203,6 +239,9 @@ public class Sudoku
          solve(model, mySudokuGrid, n, n2, lowerBound, upperBound);
     }
 
+    /**
+     * Exercice 1 - ext 1 : Solve 25x25 sudoku grid.
+     */
     public static void sudoku25x25()
     {
         // Exercice 1
@@ -225,6 +264,270 @@ public class Sudoku
         int upperBound = n2;
 
          solve(model, mySudokuGrid, n, n2, lowerBound, upperBound);
+    }
+
+    /**
+     * Exercice 1 - ext 2 : Solve 6x6 sudoku grid.
+     */
+    public static void rect6x6()
+    {
+        // Exercice 1
+        // Create a new choco model
+        Model model = new Model("Sodoku6x6");
+
+        // declare sizes
+        int line = 2;
+        int column = 3;
+        int size = line * column;
+
+        // Set boundaries values
+        int lowerBound = 1;
+        int upperBound = size;
+
+        // Declare matrix
+        IntVar[][] t = model.intVarMatrix("t", size, size, lowerBound, upperBound);
+
+        // pick the grid 6x6
+        int[][] mySudokuGrid = grid6x6;
+
+        // initialize t
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                // If my current value is > 0
+                if (mySudokuGrid[i][j] > 0)
+                {
+                    // get it
+                    t[i][j] = model.intVar(mySudokuGrid[i][j]);
+                }
+            }
+        }
+
+        // Settings constraints on line, cols and regions
+
+        IntVar[] lines = new IntVar[size];
+        IntVar[] cols = new IntVar[size];
+        IntVar[] regions = new IntVar[size];
+
+        for (int i = 0; i < size; i++)
+        {
+            // Get line
+            System.arraycopy(t[i], 0, lines, 0, size);
+
+            // Get columns
+            for (int k = 0; k < size; k++)
+            {
+                cols[k] = t[k][i];
+            }
+
+            // Set all diff
+            model.allDifferent(lines).post();
+            model.allDifferent(cols).post();
+        }
+
+        // Constraint on regions
+        for (int x = 0; x < size; x += line)
+        {
+            for (int y = 0; y < size; y += column)
+            {
+                int counter = 0;
+                for (int l = 0; l < line; l++)
+                {
+                    for (int o = 0; o < column; o++)
+                    {
+                        regions[counter] = t[l + x][o + y];
+                        counter++;
+                    }
+                }
+                // set all diff
+                model.allDifferent(regions).post();
+            }
+        }
+
+        // Get solver
+        Solver solver = model.getSolver();
+
+        // Tell to solver to propagate constraints in order to reach endpoint
+        try
+        {
+            solver.propagate();
+        }
+        catch (ContradictionException ce)
+        {
+            System.out.println("Le problème n'a pas de solution !");
+            exit(1);
+        }
+
+        // *** SOLVE ***
+        // find solution
+        Solution solution = solver.findSolution();
+
+
+        // if solution is null, then we are doomed
+        if (solution == null)
+        {
+            System.out.println("Damn, it's a K.O !");
+        }
+        // Victory, we go a solution here
+        else
+        {
+           displayRect(solver, t, size, line, column);
+        }
+    }
+
+    /**
+     * Exercice 1 - ext 2 : Solve 8x8 sudoku grid.
+     */
+    public static void rect8x8()
+    {
+        // Exercice 1
+        // Create a new choco model
+        Model model = new Model("Sodoku8x8");
+
+        // declare sizes
+        int line = 2;
+        int column = 4;
+        int size = line * column;
+
+        // Set boundaries values
+        int lowerBound = 1;
+        int upperBound = size;
+
+        // Declare matrix
+        IntVar[][] t = model.intVarMatrix("t", size, size, lowerBound, upperBound);
+
+        // pick the grid 6x6
+        int[][] mySudokuGrid = grid8x8;
+
+        // initialize t
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                // If my current value is > 0
+                if (mySudokuGrid[i][j] > 0)
+                {
+                    // get it
+                    t[i][j] = model.intVar(mySudokuGrid[i][j]);
+                }
+            }
+        }
+
+        // Settings constraints on line, cols and regions
+
+        IntVar[] lines = new IntVar[size];
+        IntVar[] cols = new IntVar[size];
+        IntVar[] regions = new IntVar[size];
+
+        for (int i = 0; i < size; i++)
+        {
+            // Get line
+            System.arraycopy(t[i], 0, lines, 0, size);
+
+            // Get columns
+            for (int k = 0; k < size; k++)
+            {
+                cols[k] = t[k][i];
+            }
+
+            // Set all diff
+            model.allDifferent(lines).post();
+            model.allDifferent(cols).post();
+        }
+
+        // Constraint on regions
+        for (int x = 0; x < size; x += line)
+        {
+            for (int y = 0; y < size; y += column)
+            {
+                int counter = 0;
+                for (int l = 0; l < line; l++)
+                {
+                    for (int o = 0; o < column; o++)
+                    {
+                        regions[counter] = t[l + x][o + y];
+                        counter++;
+                    }
+                }
+                // set all diff
+                model.allDifferent(regions).post();
+            }
+        }
+
+        // Get solver
+        Solver solver = model.getSolver();
+
+        // Tell to solver to propagate constraints in order to reach endpoint
+        try
+        {
+            solver.propagate();
+        }
+        catch (ContradictionException ce)
+        {
+            System.out.println("Le problème n'a pas de solution !");
+            exit(1);
+        }
+
+        // *** SOLVE ***
+        // find solution
+        Solution solution = solver.findSolution();
+
+
+        // if solution is null, then we are doomed
+        if (solution == null)
+        {
+            System.out.println("Damn, it's a K.O !");
+        }
+        // Victory, we go a solution here
+        else
+        {
+           displayRect(solver, t, size, line, column);
+        }
+    }
+
+    public static void displayRect(final Solver solver, final IntVar[][] t, final int size, final int line, final int column)
+    {
+        int width = String.valueOf(size).length();
+        // Custom outprint
+        // outprint title
+        System.out.println("");
+        System.out.println("***************************************");
+        System.out.println("****** SOLUTION FOR SUDOKU " + size + "x" + size + " ********");
+        System.out.println("***************************************");
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < line; i++)
+        {
+            sb.append("¤");
+            for (int j = 0; j < column * 2 * width + 1; j++)
+            {
+                sb.append("¤");
+            }
+        }
+        sb.append("¤");
+        for (int i = 0; i < size; i++)
+        {
+            if (i % line == 0)
+            {
+                System.out.println(" " + sb);
+            }
+            for (int j = 0; j < size; j++)
+            {
+                if (j % column == 0)
+                {
+                    System.out.print(" |");
+                }
+                System.out.printf(" %" + width + "d", t[i][j].getValue());
+            }
+            System.out.println(" |");
+        }
+        System.out.println(" " + sb);
+        System.out.println("");
+
+        // show stats
+        solver.showShortStatisticsOnShutdown();
     }
 
     /**
@@ -351,124 +654,6 @@ public class Sudoku
             System.out.println("Solution found in : " + duration / 1000000 + " ms");
         }
     }
-
-    /**
-     * Helper method in charge of solving sudoku.
-     *
-     * @param model current model
-     * @param mySudokuGrid current sudoku grid
-     * @param n size
-     * @param n2 size²
-     * @param lowerBound min value
-     * @param upperBound highest value
-     *
-     * @return Array IntVar
-     */
-    public static IntVar[][] solveBis(final Model model, final int[][] mySudokuGrid, final int n, final int n2, final int lowerBound, final int upperBound)
-    {
-        // Start time
-        long startTime = System.nanoTime();
-
-        // Declare tab with n2*n2 dimension (n2 row and n2 column)
-        IntVar[][] t = new IntVar[n2][n2];
-
-        // *** INITIALIZE t[i][j] according to grid[i][j] ***
-        // Here we need to iterate over t[][]
-        for (int i = 0; i < n2; i++)
-        {
-            for (int j = 0; j < n2; j++)
-            {
-                // If my current cell is > 0, then i pick the current value
-                if (mySudokuGrid[i][j] > 0)
-                {
-                    t[i][j] = model.intVar(mySudokuGrid[i][j]);
-                }
-                // my current cell is equal to 0, need a domain from lower to upper bound
-                else
-                {
-                    t[i][j] = model.intVar("X", lowerBound, upperBound);
-                }
-            }
-        }
-
-
-        // *** SET CONSTRAINTS ON LINES ***
-        IntVar[] lines = new IntVar[n2];
-        // *** SET CONSTRAINTS ON COLUMNS ***
-        IntVar[] cols = new IntVar[n2];
-        // *** SET CONSTRAINTS ON REGION ***
-        IntVar[] region = new IntVar[n2];
-        for (int i = 0; i < n2; i++)
-        {
-            // Feed constraints
-            for (int j = 0; j < n2; j++)
-            {
-                lines[j] = t[i][j];
-                cols[j] = t[j][i];
-            }
-            // Say to choco to use differents values for each vars because of sudoku's rules
-            model.allDifferent(lines).post();
-            model.allDifferent(cols).post();
-        }
-
-
-        // for a region r you can do 2 nested loops on i and j
-        for (int r = 0; r < n2; r++)
-        {
-            // Set up a counter
-            int counter = 0;
-
-            // region r: first coord i0 = r / n * n
-            int i0 = r / n * n;
-            // and j0 = r % n * n
-            int j0 = r % n * n;
-
-            // i from i0 to i0+n (excluded)
-            for (int i = 0; i < n ; i++)
-            {
-                // and j from j0 to j0+n (excluded)
-                for (int j = 0; j < n; j++)
-                {
-                    region[counter] = t[i + i0][j + j0];
-                    counter++;
-                }
-            }
-            model.allDifferent(region).post();
-        }
-
-        // Get solver
-        Solver solver = model.getSolver();
-
-        // Tell to solver to propagate constraints in order to reach endpoint
-        try
-        {
-            solver.propagate();
-        }
-        catch (ContradictionException ce)
-        {
-            System.out.println("Le problème n'a pas de solution !");
-            exit(1);
-        }
-
-        // *** SOLVE ***
-        // find solution
-        Solution solution = solver.findSolution();
-
-
-        // if solution is null, then we are doomed
-        if (solution == null)
-        {
-            System.out.println("Damn, it's a K.O !");
-        }
-        // Victory, we go a solution here
-        else
-        {
-            return t;
-        }
-
-        return null;
-    }
-
 
     /**
      *  Generate sudoku grid 9x9.
@@ -600,4 +785,121 @@ public class Sudoku
         System.out.println(" " + s);
     }
 
+
+    /**
+     * Helper method in charge of solving sudoku.
+     *
+     * @param model current model
+     * @param mySudokuGrid current sudoku grid
+     * @param n size
+     * @param n2 size²
+     * @param lowerBound min value
+     * @param upperBound highest value
+     *
+     * @return Array IntVar
+     */
+    public static IntVar[][] solveBis(final Model model, final int[][] mySudokuGrid, final int n, final int n2, final int lowerBound, final int upperBound)
+    {
+        // Start time
+        long startTime = System.nanoTime();
+
+        // Declare tab with n2*n2 dimension (n2 row and n2 column)
+        IntVar[][] t = new IntVar[n2][n2];
+
+        // *** INITIALIZE t[i][j] according to grid[i][j] ***
+        // Here we need to iterate over t[][]
+        for (int i = 0; i < n2; i++)
+        {
+            for (int j = 0; j < n2; j++)
+            {
+                // If my current cell is > 0, then i pick the current value
+                if (mySudokuGrid[i][j] > 0)
+                {
+                    t[i][j] = model.intVar(mySudokuGrid[i][j]);
+                }
+                // my current cell is equal to 0, need a domain from lower to upper bound
+                else
+                {
+                    t[i][j] = model.intVar("X", lowerBound, upperBound);
+                }
+            }
+        }
+
+
+        // *** SET CONSTRAINTS ON LINES ***
+        IntVar[] lines = new IntVar[n2];
+        // *** SET CONSTRAINTS ON COLUMNS ***
+        IntVar[] cols = new IntVar[n2];
+        // *** SET CONSTRAINTS ON REGION ***
+        IntVar[] region = new IntVar[n2];
+        for (int i = 0; i < n2; i++)
+        {
+            // Feed constraints
+            for (int j = 0; j < n2; j++)
+            {
+                lines[j] = t[i][j];
+                cols[j] = t[j][i];
+            }
+            // Say to choco to use differents values for each vars because of sudoku's rules
+            model.allDifferent(lines).post();
+            model.allDifferent(cols).post();
+        }
+
+
+        // for a region r you can do 2 nested loops on i and j
+        for (int r = 0; r < n2; r++)
+        {
+            // Set up a counter
+            int counter = 0;
+
+            // region r: first coord i0 = r / n * n
+            int i0 = r / n * n;
+            // and j0 = r % n * n
+            int j0 = r % n * n;
+
+            // i from i0 to i0+n (excluded)
+            for (int i = 0; i < n ; i++)
+            {
+                // and j from j0 to j0+n (excluded)
+                for (int j = 0; j < n; j++)
+                {
+                    region[counter] = t[i + i0][j + j0];
+                    counter++;
+                }
+            }
+            model.allDifferent(region).post();
+        }
+
+        // Get solver
+        Solver solver = model.getSolver();
+
+        // Tell to solver to propagate constraints in order to reach endpoint
+        try
+        {
+            solver.propagate();
+        }
+        catch (ContradictionException ce)
+        {
+            System.out.println("Le problème n'a pas de solution !");
+            exit(1);
+        }
+
+        // *** SOLVE ***
+        // find solution
+        Solution solution = solver.findSolution();
+
+
+        // if solution is null, then we are doomed
+        if (solution == null)
+        {
+            System.out.println("Damn, it's a K.O !");
+        }
+        // Victory, we go a solution here
+        else
+        {
+            return t;
+        }
+
+        return null;
+    }
 }
